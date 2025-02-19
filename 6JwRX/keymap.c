@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRANSPARENT, KC_F1,          KC_F2,          KC_F3,          KC_F4,          KC_F5,                                          KC_F6,          KC_F7,          KC_F8,          KC_F9,          KC_F10,         KC_F11,
     KC_TRANSPARENT, KC_EXLM,        KC_AT,          KC_LCBR,        KC_RCBR,        KC_PERC,                                        KC_MINUS,       KC_7,           KC_8,           KC_9,           KC_SLASH,       KC_F12,
     KC_TRANSPARENT, TD(DANCE_0),    TD(DANCE_1),    TD(DANCE_2),    TD(DANCE_3),    KC_HASH,                                        KC_PLUS,        MT(MOD_RGUI, KC_4),MT(MOD_RSFT, KC_5),MT(MOD_RALT, KC_6),TD(DANCE_4),    KC_BSPC,
-    KC_TRANSPARENT, KC_AMPR,        KC_ASTR,        KC_LBRC,        KC_RBRC,        KC_DLR,                                         KC_DOT,         KC_1,           KC_2,           KC_3,           KC_EQUAL,       KC_ENTER,       
+    KC_TRANSPARENT, KC_AMPR,        KC_ASTR,        KC_LBRC,        KC_RBRC,        KC_DLR,                                         KC_DOT,         KC_1,           KC_2,           KC_3,           KC_EQUAL,       KC_ENTER,
                                                     KC_TRANSPARENT, KC_TRANSPARENT,                                 KC_DELETE,      KC_0
   ),
   [2] = LAYOUT_voyager(
@@ -351,19 +351,18 @@ void housekeeping_task_user(void) {
 }
 
 bool achordion_chord(uint16_t tap_hold_keycode,
-                     keyrecord_t* tap_hold_record,
+                     keyrecord_t *tap_hold_record,
                      uint16_t other_keycode,
-                     keyrecord_t* other_record) {
-  // Assume it's a hold if it's one of the four Voyager thumb buttons
-  if (tap_hold_keycode == KC_ENTER || tap_hold_keycode == KC_TAB ||
-      tap_hold_keycode == KC_BSPC || tap_hold_keycode == KC_SPACE) {
-    return true;
+                     keyrecord_t *other_record) {
+  switch (other_keycode) {
+    case QK_MOD_TAP ... QK_MOD_TAP_MAX:
+    case QK_LAYER_TAP ... QK_LAYER_TAP_MAX:
+      other_keycode &= 0xff;
+      // Get base keycode.
   }
 
-  // Also allow same-hand holds when the other key is in the rows below the
-  // alphas. I need the `% (MATRIX_ROWS / 2)` because my keyboard is split.
-  if (other_record->event.key.row % (MATRIX_ROWS / 2) >= 4) { return true; }
-
-  // Otherwise, follow the opposite hands rule.
-  return achordion_opposite_hands(tap_hold_record, other_record);
+  // Allow same-hand holds with non-alpha keys.
+  if (other_keycode > KC_Z) {
+    return true;
+  }
 }
