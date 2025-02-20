@@ -354,6 +354,8 @@ bool achordion_chord(uint16_t tap_hold_keycode,
                      keyrecord_t *tap_hold_record,
                      uint16_t other_keycode,
                      keyrecord_t *other_record) {
+  dprintf("Achordion check: tap_hold_keycode=%04X, other_keycode=%04X\n", tap_hold_keycode, other_keycode);
+
   if (other_keycode >= QK_LAYER_TAP && other_keycode <= QK_LAYER_TAP_MAX) {
     return true;
   }
