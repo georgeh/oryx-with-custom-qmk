@@ -354,11 +354,11 @@ bool achordion_chord(uint16_t tap_hold_keycode,
                      keyrecord_t *tap_hold_record,
                      uint16_t other_keycode,
                      keyrecord_t *other_record) {
-  switch (other_keycode) {
-    case QK_MOD_TAP ... QK_MOD_TAP_MAX:
-    case QK_LAYER_TAP ... QK_LAYER_TAP_MAX:
-      other_keycode &= 0xff;
-      // Get base keycode.
+  if (other_keycode >= QK_LAYER_TAP && other_keycode <= QK_LAYER_TAP_MAX) {
+    return true;
+  }
+  if (tap_hold_keycode >= QK_LAYER_TAP && tap_hold_keycode <= QK_LAYER_TAP_MAX) {
+    return true;
   }
 
   // Allow same-hand holds with non-alpha keys.
